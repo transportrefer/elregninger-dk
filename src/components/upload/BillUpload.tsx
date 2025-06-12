@@ -19,21 +19,29 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
   const [loading, setLoading] = useState(false);
   const [compressionProgress, setCompressionProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
+  const [analysisStep, setAnalysisStep] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const compressImage = async (imageFile: File): Promise<File> => {
     const options = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1500,
+      maxSizeMB: 0.8, // Reduced from 1MB to 0.8MB
+      maxWidthOrHeight: 1200, // Reduced from 1500px to 1200px  
+      quality: 0.85, // Added explicit quality setting
       useWebWorker: true,
+      fileType: 'image/jpeg', // Force JPEG for better compression
       onProgress: (progress: number) => {
         setCompressionProgress(Math.round(progress));
       }
     };
+    
+    console.log(`🖼️ Compressing ${imageFile.name}: ${(imageFile.size / 1024 / 1024).toFixed(2)}MB`);
 
     try {
-      return await imageCompression(imageFile, options);
+      const compressedFile = await imageCompression(imageFile, options);
+      const savings = ((imageFile.size - compressedFile.size) / imageFile.size * 100).toFixed(1);
+      console.log(`✅ Compression complete: ${(compressedFile.size / 1024 / 1024).toFixed(2)}MB (${savings}% reduction)`);
+      return compressedFile;
     } catch (error) {
       console.error('Compression error:', error);
       return imageFile;
@@ -128,19 +136,26 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
 
     setLoading(true);
     onError('');
+    setAnalysisStep('Forbereder analyse...');
 
     const formData = new FormData();
     formData.append('file', file);
 
     try {
+      setAnalysisStep('Sender til AI-analyse...');
+      const startTime = Date.now();
+      
       const response = await fetch('/api/analyze', {
         method: 'POST',
         body: formData,
       });
 
       const data = await response.json();
+      const clientTime = Date.now() - startTime;
+      console.log(`📊 Client-side total time: ${clientTime}ms`);
 
       if (response.ok) {
+        setAnalysisStep('Analyse fuldført!');
         onFileAnalyzed(data);
         setFile(null); // Clear file after successful analysis
         if (fileInputRef.current) fileInputRef.current.value = '';
@@ -152,6 +167,7 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
       onError('Netværksfejl. Tjek din internetforbindelse og prøv igen.');
     } finally {
       setLoading(false);
+      setAnalysisStep('');
     }
   };
 
@@ -294,7 +310,7 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
             {loading ? (
               <>
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3" />
-                Analyserer din regning...
+                {analysisStep || 'Analyserer din regning...'}
               </>
             ) : (
               <>
@@ -303,6 +319,13 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
               </>
             )}
           </Button>
+          
+          {/* Performance tip for users */}
+          {loading && (
+            <div className="text-xs text-gray-500 text-center mt-2">
+              📊 AI-analyse kan tage 10-30 sekunder
+            </div>
+          )}
 
           {/* Mobile-specific hints */}
           {isMobile && (

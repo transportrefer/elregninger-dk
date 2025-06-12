@@ -130,9 +130,13 @@ Analyser kun billedet og returner gyldig JSON som vist i eksemplerne.
 `;
 
 export async function POST(request: NextRequest) {
+  const startTime = Date.now();
+  console.log('🚀 Analysis started at:', new Date().toISOString());
+  
   try {
     const formData = await request.formData();
     const file = formData.get('file');
+    console.log('📄 File received:', file instanceof File ? `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)` : 'Invalid file');
     
     // More robust file validation
     if (!file || !(file instanceof File)) {
@@ -156,8 +160,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Convert file to buffer for Gemini API
+    const conversionStart = Date.now();
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
+    console.log('⚡ File conversion took:', Date.now() - conversionStart, 'ms');
     
     // Prepare for Gemini API - Use 2.5 Flash Preview as requested
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-05-20' });
@@ -170,9 +176,13 @@ export async function POST(request: NextRequest) {
     };
 
     // Call Gemini API with JSON mode to force valid JSON output
+    console.log('🤖 Calling Gemini API with payload size:', buffer.toString('base64').length, 'chars');
+    const geminiStart = Date.now();
     const result = await model.generateContent([ANALYSIS_PROMPT, imagePart]);
     const response = await result.response;
     const text = response.text();
+    const geminiTime = Date.now() - geminiStart;
+    console.log('🎯 Gemini API call took:', geminiTime, 'ms');
     
     // With JSON mode, response should be direct JSON. Add fallback parsing.
     let analysisData;
@@ -241,10 +251,19 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    const totalTime = Date.now() - startTime;
+    console.log('✅ Total analysis time:', totalTime, 'ms');
+    console.log('📊 Performance breakdown:', {
+      geminiApi: geminiTime,
+      otherProcessing: totalTime - geminiTime,
+      total: totalTime
+    });
+
     return NextResponse.json({
       success: true,
       data: validatedData,
       tier,
+      processingTime: totalTime,
       rawResponse: text // For debugging during spike
     });
 
