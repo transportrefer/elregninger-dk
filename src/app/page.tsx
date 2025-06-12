@@ -5,7 +5,7 @@ import { AnalysisResult } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, AlertCircle, XCircle, FileText, TrendingUp } from 'lucide-react';
+import { CheckCircle, AlertCircle, XCircle, FileText, TrendingUp, Zap, Sparkles } from 'lucide-react';
 import BillUpload from '@/components/upload/BillUpload';
 
 export default function ElregningerAnalysis() {
@@ -23,18 +23,29 @@ export default function ElregningerAnalysis() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Elregninger.dk
-          </h1>
-          <p className="text-lg text-gray-600 mb-2">
-            Analyser dine elregninger og sammenlign med andre husstande
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="relative">
+              <Zap className="h-8 w-8 text-blue-600" />
+              <Sparkles className="h-4 w-4 text-emerald-500 absolute -top-1 -right-1" />
+            </div>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-700 to-indigo-600 bg-clip-text text-transparent">
+              Elregninger.dk
+            </h1>
+          </div>
+          <p className="text-lg text-slate-600 mb-3 max-w-2xl mx-auto leading-relaxed">
+            Analyser dine elregninger med AI og sammenlign med andre husstande
           </p>
-          <Badge variant="default" className="text-xs">
-            🚀 MVP Beta
-          </Badge>
+          <div className="flex items-center justify-center gap-2">
+            <Badge variant="default" className="text-xs bg-gradient-to-r from-blue-600 to-indigo-600 text-white border-0">
+              🤖 AI-Powered
+            </Badge>
+            <Badge variant="outline" className="text-xs border-emerald-200 text-emerald-700">
+              🚀 MVP Beta
+            </Badge>
+          </div>
         </div>
 
         <div className="mb-6">
@@ -49,12 +60,17 @@ export default function ElregningerAnalysis() {
         )}
 
         {result && (
-          <Card>
-            <CardHeader>
+          <Card className="shadow-xl border-0 bg-white/80 backdrop-blur-sm">
+            <CardHeader className="bg-gradient-to-r from-emerald-50 to-blue-50 rounded-t-lg">
               <CardTitle className="flex items-center justify-between">
                 <span className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5 text-green-600" />
-                  Din elregning er analyseret
+                  <div className="relative">
+                    <TrendingUp className="h-5 w-5 text-emerald-600" />
+                    <Sparkles className="h-3 w-3 text-blue-500 absolute -top-1 -right-1" />
+                  </div>
+                  <span className="bg-gradient-to-r from-emerald-700 to-blue-700 bg-clip-text text-transparent">
+                    Din elregning er analyseret
+                  </span>
                 </span>
                 <Badge 
                   variant={
@@ -86,11 +102,18 @@ export default function ElregningerAnalysis() {
               )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                <Card className="bg-gradient-to-br from-emerald-50 via-green-50 to-blue-50 border-0 shadow-lg">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      Dit forbrug
+                      <div className="relative">
+                        <Zap className="h-5 w-5 text-emerald-600" />
+                        <div className="absolute inset-0 animate-pulse">
+                          <Zap className="h-5 w-5 text-emerald-400 opacity-50" />
+                        </div>
+                      </div>
+                      <span className="bg-gradient-to-r from-emerald-700 to-blue-700 bg-clip-text text-transparent">
+                        Dit forbrug
+                      </span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -114,11 +137,16 @@ export default function ElregningerAnalysis() {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="bg-gradient-to-br from-blue-50 via-slate-50 to-indigo-50 border-0 shadow-lg">
                   <CardHeader className="pb-3">
                     <CardTitle className="text-lg flex items-center gap-2">
-                      <FileText className="h-4 w-4 text-blue-600" />
-                      Regningsdetaljer
+                      <div className="relative">
+                        <FileText className="h-5 w-5 text-blue-600" />
+                        <Sparkles className="h-3 w-3 text-indigo-500 absolute -top-1 -right-1" />
+                      </div>
+                      <span className="bg-gradient-to-r from-blue-700 to-indigo-700 bg-clip-text text-transparent">
+                        Regningsdetaljer
+                      </span>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
