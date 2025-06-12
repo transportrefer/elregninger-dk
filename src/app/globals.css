@@ -120,3 +120,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  /* Touch-optimized targets for mobile (44x44px minimum) */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+  
+  /* Mobile-first image upload styles */
+  .drag-active {
+    @apply border-blue-400 bg-blue-50 dark:bg-blue-950/20;
+  }
+  
+  /* Better mobile scroll behavior */
+  .mobile-scroll {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+  
+  /* Improved mobile focus styles */
+  .mobile-focus:focus-visible {
+    @apply outline-2 outline-blue-500 outline-offset-2;
+  }
+}

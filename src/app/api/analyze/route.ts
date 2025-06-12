@@ -170,11 +170,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Call Gemini API with JSON mode to force valid JSON output
-    const result = await model.generateContent([ANALYSIS_PROMPT, imagePart], {
-      generationConfig: {
-        responseMimeType: "application/json"
-      }
-    });
+    const result = await model.generateContent([ANALYSIS_PROMPT, imagePart]);
     const response = await result.response;
     const text = response.text();
     
@@ -183,7 +179,7 @@ export async function POST(request: NextRequest) {
     try {
       // First, try parsing directly (JSON mode should give clean JSON)
       analysisData = JSON.parse(text);
-    } catch (directParseError) {
+    } catch {
       // Fallback: extract JSON from wrapped text using regex
       const jsonString = text.match(/\{[\s\S]*\}/)?.[0];
       if (!jsonString) {
@@ -197,7 +193,7 @@ export async function POST(request: NextRequest) {
       
       try {
         analysisData = JSON.parse(jsonString);
-      } catch (fallbackParseError) {
+      } catch {
         console.error("Failed to parse JSON from Gemini response. String was:", jsonString);
         return NextResponse.json({ 
           error: 'Modtog et ugyldigt format fra AI-tjenesten.',

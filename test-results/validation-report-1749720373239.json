@@ -1,0 +1,176 @@
+{
+  "summary": {
+    "totalBills": 18,
+    "successfulRequests": 18,
+    "overallSuccessRate": "100.0%",
+    "tier1SuccessRate": "94.4%",
+    "tier2SuccessRate": "94.4%",
+    "tier3SuccessRate": "33.3%",
+    "combinedTier12Rate": "94.4%"
+  },
+  "tierBreakdown": {
+    "tier1Critical": "17/18 bills",
+    "tier2Important": "17/18 bills",
+    "tier3NiceToHave": "6/18 bills"
+  },
+  "providerStats": {
+    "EWII": {
+      "total": 4,
+      "successful": 4
+    },
+    "Energi+": {
+      "total": 4,
+      "successful": 4
+    },
+    "Andel Energi": {
+      "total": 3,
+      "successful": 3
+    },
+    "Vindstød": {
+      "total": 4,
+      "successful": 4
+    },
+    "Strømlinet": {
+      "total": 1,
+      "successful": 1
+    },
+    "NettoPower": {
+      "total": 1,
+      "successful": 1
+    },
+    "EDISON": {
+      "total": 1,
+      "successful": 1
+    }
+  },
+  "detailedResults": [
+    {
+      "filename": "520985801006_2_juni_2025.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "Energi (3).pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "506931403.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "3594410.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    },
+    {
+      "filename": "Energi.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "4420166.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    },
+    {
+      "filename": "faktura_#1604581.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    },
+    {
+      "filename": "Energi (2).pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "Energi (1).pdf",
+      "success": true,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "506931403 (1).pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "520985801004_1_april_2025.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "4529873.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    },
+    {
+      "filename": "520985801003_3_marts_2025 (2).pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "NettoPower-1611066-new (1).pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "510515987.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "520985801005_1_maj_2025.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "fakturaF37892.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    },
+    {
+      "filename": "3789875.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    }
+  ],
+  "errors": [],
+  "timestamp": "2025-06-12T09:26:13.239Z"
+}
