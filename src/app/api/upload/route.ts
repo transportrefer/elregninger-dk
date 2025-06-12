@@ -3,6 +3,31 @@ import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { getJob, updateJobStatus } from '@/lib/job-manager';
 import { validateUploadFile } from '@/lib/blob-storage';
 
+// Fire-and-forget trigger for processing (Chain-of-Functions pattern)
+async function triggerProcessing(jobId: string) {
+  try {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL 
+      ? `https://${process.env.VERCEL_URL}` 
+      : 'http://localhost:3000';
+      
+    // Non-blocking fetch call to start processing
+    fetch(`${baseUrl}/api/process`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-internal-secret': process.env.INTERNAL_TRIGGER_SECRET || 'dev-secret'
+      },
+      body: JSON.stringify({ jobId })
+    }).catch(error => {
+      console.error('Failed to trigger processing:', error);
+    });
+    
+    console.log(`🚀 Triggered processing for job ${jobId}`);
+  } catch (error) {
+    console.error('Error triggering processing:', error);
+  }
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
     const body = (await request.json()) as HandleUploadBody;
@@ -57,6 +82,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
           });
           
           console.log(`✅ Job ${uploadJobId} marked as PENDING_ANALYSIS`);
+          
+          // Immediately trigger processing (Chain-of-Functions pattern)
+          triggerProcessing(uploadJobId);
         }
       }
     });
