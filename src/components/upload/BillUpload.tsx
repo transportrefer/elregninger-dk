@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import { upload } from '@vercel/blob/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -136,39 +137,132 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
 
     setLoading(true);
     onError('');
-    setAnalysisStep('Forbereder analyse...');
-
-    const formData = new FormData();
-    formData.append('file', file);
+    setAnalysisStep('Opretter analyse-job...');
 
     try {
-      setAnalysisStep('Sender til AI-analyse...');
       const startTime = Date.now();
       
-      const response = await fetch('/api/analyze', {
+      // Step 1: Create job and get upload URL
+      console.log('📝 Creating analysis job...');
+      const jobResponse = await fetch('/api/jobs', {
         method: 'POST',
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fileName: file.name,
+          fileSize: file.size,
+          contentType: file.type
+        })
       });
-
-      const data = await response.json();
-      const clientTime = Date.now() - startTime;
-      console.log(`📊 Client-side total time: ${clientTime}ms`);
-
-      if (response.ok) {
-        setAnalysisStep('Analyse fuldført!');
-        onFileAnalyzed(data);
-        setFile(null); // Clear file after successful analysis
-        if (fileInputRef.current) fileInputRef.current.value = '';
-        if (cameraInputRef.current) cameraInputRef.current.value = '';
-      } else {
-        onError(data.error || 'Ukendt fejl opstod under analysen');
+      
+      if (!jobResponse.ok) {
+        const error = await jobResponse.json();
+        throw new Error(error.error || 'Kunne ikke oprette analyse-job');
       }
-    } catch {
-      onError('Netværksfejl. Tjek din internetforbindelse og prøv igen.');
+      
+      const { jobId, jobAccessToken, uploadUrl } = await jobResponse.json();
+      console.log(`✅ Job created: ${jobId}`);
+      
+      // Step 2: Upload file directly to blob storage
+      setAnalysisStep('Uploader fil...');
+      console.log('📤 Uploading file to blob storage...');
+      
+      const blob = await upload(file.name, file, {
+        access: 'private',
+        handleUploadUrl: uploadUrl
+      });
+      
+      console.log(`✅ File uploaded: ${blob.url}`);
+      
+      // Step 3: Start polling for results
+      setAnalysisStep('Analyserer regning...');
+      const result = await pollForResults(jobId, jobAccessToken);
+      
+      const totalTime = Date.now() - startTime;
+      console.log(`📊 Total async flow time: ${totalTime}ms`);
+      
+      setAnalysisStep('Analyse fuldført!');
+      onFileAnalyzed(result);
+      
+      // Clear form
+      setFile(null);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (cameraInputRef.current) cameraInputRef.current.value = '';
+      
+    } catch (error) {
+      console.error('❌ Async analysis flow failed:', error);
+      onError(error instanceof Error ? error.message : 'Ukendt fejl opstod under analysen');
     } finally {
       setLoading(false);
       setAnalysisStep('');
     }
+  };
+  
+  const pollForResults = async (jobId: string, jobAccessToken: string): Promise<any> => {
+    let interval = 2000; // Start with 2 seconds
+    const maxInterval = 15000; // Cap at 15 seconds
+    const maxPollingTime = 2 * 60 * 1000; // 2 minutes maximum
+    const pollingStartTime = Date.now();
+    
+    return new Promise((resolve, reject) => {
+      const poll = async () => {
+        try {
+          // Check if we've been polling too long
+          if (Date.now() - pollingStartTime > maxPollingTime) {
+            reject(new Error('Analyse tog for lang tid. Prøv venligst igen.'));
+            return;
+          }
+          
+          const response = await fetch(`/api/jobs/${jobId}`, {
+            headers: {
+              'Authorization': `Bearer ${jobAccessToken}`
+            }
+          });
+          
+          if (!response.ok) {
+            reject(new Error('Kunne ikke hente analyse status'));
+            return;
+          }
+          
+          const job = await response.json();
+          console.log(`🔄 Job ${jobId} status: ${job.status}`);
+          
+          switch (job.status) {
+            case 'AWAITING_UPLOAD':
+            case 'PENDING_ANALYSIS':
+              setAnalysisStep('Venter på analyse...');
+              break;
+              
+            case 'PROCESSING':
+              setAnalysisStep('Analyserer regning...');
+              // Exponential backoff - increase interval for next poll
+              interval = Math.min(interval * 1.5, maxInterval);
+              setTimeout(poll, interval);
+              break;
+              
+            case 'COMPLETED':
+              console.log(`✅ Job ${jobId} completed successfully`);
+              resolve(job.result);
+              break;
+              
+            case 'FAILED':
+              console.log(`❌ Job ${jobId} failed: ${job.error}`);
+              reject(new Error(job.error || 'Analyse fejlede'));
+              break;
+              
+            default:
+              // For pending states, continue polling with current interval
+              setTimeout(poll, interval);
+              break;
+          }
+        } catch (error) {
+          console.error('Polling error:', error);
+          reject(new Error('Netværksfejl under analyse. Prøv venligst igen.'));
+        }
+      };
+      
+      // Start polling
+      poll();
+    });
   };
 
   const isMobile = typeof window !== 'undefined' && 
@@ -296,7 +390,7 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
           <Alert className="border-green-200 bg-green-50">
             <Shield className="h-4 w-4 text-green-600" />
             <AlertDescription className="text-green-800">
-              <strong>Privatliv garanteret:</strong> Din fil slettes straks efter analyse. Vi sælger aldrig dine data.
+              <strong>Privatliv garanteret:</strong> Din fil krypteres og slettes automatisk efter analyse. Vi sælger aldrig dine data.
             </AlertDescription>
           </Alert>
 
@@ -323,7 +417,7 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
           {/* Performance tip for users */}
           {loading && (
             <div className="text-xs text-gray-500 text-center mt-2">
-              📊 AI-analyse kan tage 10-30 sekunder
+              📊 Analyse kan tage op til 60 sekunder
             </div>
           )}
 
