@@ -1,0 +1,238 @@
+{
+  "summary": {
+    "totalBills": 18,
+    "successfulRequests": 0,
+    "overallSuccessRate": "0.0%",
+    "tier1SuccessRate": "0.0%",
+    "tier2SuccessRate": "0.0%",
+    "tier3SuccessRate": "0.0%",
+    "combinedTier12Rate": "0.0%"
+  },
+  "tierBreakdown": {
+    "tier1Critical": "0/18 bills",
+    "tier2Important": "0/18 bills",
+    "tier3NiceToHave": "0/18 bills"
+  },
+  "providerStats": {},
+  "detailedResults": [
+    {
+      "filename": "3594410.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "3789875.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "4420166.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "4529873.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "506931403 (1).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "506931403.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "510515987.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "520985801003_3_marts_2025 (2).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "520985801004_1_april_2025.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "520985801005_1_maj_2025.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "520985801006_2_juni_2025.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "Energi (1).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "Energi (2).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "Energi (3).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "Energi.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "NettoPower-1611066-new (1).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "fakturaF37892.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "faktura_#1604581.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    }
+  ],
+  "errors": [
+    {
+      "filename": "3594410.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "3789875.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "4420166.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "4529873.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "506931403 (1).pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "506931403.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "510515987.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "520985801003_3_marts_2025 (2).pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "520985801004_1_april_2025.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "520985801005_1_maj_2025.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "520985801006_2_juni_2025.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "Energi (1).pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "Energi (2).pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "Energi (3).pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "Energi.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "NettoPower-1611066-new (1).pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "fakturaF37892.pdf",
+      "error": "fetch failed",
+      "status": 500
+    },
+    {
+      "filename": "faktura_#1604581.pdf",
+      "error": "fetch failed",
+      "status": 500
+    }
+  ],
+  "timestamp": "2025-06-12T00:44:38.407Z"
+}

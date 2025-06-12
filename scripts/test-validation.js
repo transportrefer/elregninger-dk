@@ -9,13 +9,11 @@
 
 const fs = require('fs');
 const path = require('path');
-const FormData = require('form-data');
-const fetch = require('node-fetch');
 
 // Configuration
 const API_URL = 'http://localhost:3000/api/analyze';
-const TEST_DIR = path.join(__dirname, '../test-bills');
-const RESULTS_DIR = path.join(TEST_DIR, 'results');
+const TEST_DIR = path.join(__dirname, '../Uploads/Bills');
+const RESULTS_DIR = path.join(__dirname, '../test-results');
 
 // Ensure results directory exists
 if (!fs.existsSync(RESULTS_DIR)) {
@@ -30,8 +28,9 @@ async function testBill(filePath) {
   console.log(`Testing: ${filename}`);
   
   try {
+    const fileBuffer = fs.readFileSync(filePath);
     const formData = new FormData();
-    formData.append('file', fs.createReadStream(filePath));
+    formData.set('file', new File([fileBuffer], filename, { type: 'application/pdf' }));
     
     const response = await fetch(API_URL, {
       method: 'POST',
@@ -47,6 +46,7 @@ async function testBill(filePath) {
       tier: result.tier || 'failed',
       data: result.data || null,
       error: result.error || null,
+      rawResponse: result.rawResponse || null,
       timestamp: new Date().toISOString()
     };
     
@@ -144,37 +144,40 @@ async function runValidation() {
   console.log('🧪 Starting Danish Bill Validation Test');
   console.log('=====================================\n');
   
-  // Find all test files
+  // Find all test files directly in Bills directory
   const testFiles = [];
-  const subdirs = ['pdf', 'images'];
   
-  for (const subdir of subdirs) {
-    const dirPath = path.join(TEST_DIR, subdir);
-    if (fs.existsSync(dirPath)) {
-      const files = fs.readdirSync(dirPath)
-        .filter(f => /\.(pdf|png|jpg|jpeg)$/i.test(f))
-        .map(f => path.join(dirPath, f));
-      testFiles.push(...files);
-    }
+  if (fs.existsSync(TEST_DIR)) {
+    const files = fs.readdirSync(TEST_DIR)
+      .filter(f => /\.(pdf|png|jpg|jpeg)$/i.test(f))
+      .map(f => path.join(TEST_DIR, f));
+    testFiles.push(...files);
   }
   
   if (testFiles.length === 0) {
-    console.log('❌ No test files found in test-bills/pdf/ or test-bills/images/');
+    console.log('❌ No test files found in Uploads/Bills/');
     console.log('Please add some Danish electricity bills to test.');
     process.exit(1);
   }
   
   console.log(`Found ${testFiles.length} test files\n`);
   
+  // Randomize test order to avoid context contamination
+  const shuffledFiles = [...testFiles].sort(() => Math.random() - 0.5);
+  console.log('📋 Processing bills in randomized order to avoid context contamination...\n');
+  
   // Test each file
   const results = [];
-  for (const filePath of testFiles) {
+  for (const filePath of shuffledFiles) {
     const result = await testBill(filePath);
     results.push(result);
     
     const status = result.success ? '✅' : '❌';
     const tier = result.tier || 'failed';
     console.log(`${status} ${result.filename} - ${tier}`);
+    if (result.error) {
+      console.log(`  Error: ${result.error}`);
+    }
     
     // Small delay to avoid overwhelming the API
     await new Promise(resolve => setTimeout(resolve, 500));

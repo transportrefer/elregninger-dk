@@ -1,0 +1,209 @@
+{
+  "summary": {
+    "totalBills": 18,
+    "successfulRequests": 10,
+    "overallSuccessRate": "55.6%",
+    "tier1SuccessRate": "50.0%",
+    "tier2SuccessRate": "50.0%",
+    "tier3SuccessRate": "16.7%",
+    "combinedTier12Rate": "50.0%"
+  },
+  "tierBreakdown": {
+    "tier1Critical": "9/18 bills",
+    "tier2Important": "9/18 bills",
+    "tier3NiceToHave": "3/18 bills"
+  },
+  "providerStats": {
+    "Vindstød": {
+      "total": 4,
+      "successful": 4
+    },
+    "Andel Energi": {
+      "total": 1,
+      "successful": 1
+    },
+    "EWII": {
+      "total": 2,
+      "successful": 2
+    },
+    "Energi+ A/S": {
+      "total": 2,
+      "successful": 2
+    },
+    "Strømlinet": {
+      "total": 1,
+      "successful": 1
+    }
+  },
+  "detailedResults": [
+    {
+      "filename": "3594410.pdf",
+      "success": true,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "3789875.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    },
+    {
+      "filename": "4420166.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    },
+    {
+      "filename": "4529873.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": true
+    },
+    {
+      "filename": "506931403 (1).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "506931403.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "510515987.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "520985801003_3_marts_2025 (2).pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "520985801004_1_april_2025.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "520985801005_1_maj_2025.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "520985801006_2_juni_2025.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "Energi (1).pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "Energi (2).pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    },
+    {
+      "filename": "Energi (3).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "Energi.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "NettoPower-1611066-new (1).pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "fakturaF37892.pdf",
+      "success": false,
+      "tier1": false,
+      "tier2": false,
+      "tier3": false
+    },
+    {
+      "filename": "faktura_#1604581.pdf",
+      "success": true,
+      "tier1": true,
+      "tier2": true,
+      "tier3": false
+    }
+  ],
+  "errors": [
+    {
+      "filename": "506931403 (1).pdf",
+      "error": "De udtrukne data levede ikke op til kvalitetskravene. Prøv evt. et tydeligere billede.",
+      "status": 422
+    },
+    {
+      "filename": "506931403.pdf",
+      "error": "De udtrukne data levede ikke op til kvalitetskravene. Prøv evt. et tydeligere billede.",
+      "status": 422
+    },
+    {
+      "filename": "520985801005_1_maj_2025.pdf",
+      "error": "Modtog et ugyldigt format fra AI-tjenesten.",
+      "status": 502
+    },
+    {
+      "filename": "520985801006_2_juni_2025.pdf",
+      "error": "Modtog et ugyldigt format fra AI-tjenesten.",
+      "status": 502
+    },
+    {
+      "filename": "Energi (3).pdf",
+      "error": "Modtog et ugyldigt format fra AI-tjenesten.",
+      "status": 502
+    },
+    {
+      "filename": "Energi.pdf",
+      "error": "Modtog et ugyldigt format fra AI-tjenesten.",
+      "status": 502
+    },
+    {
+      "filename": "NettoPower-1611066-new (1).pdf",
+      "error": "De udtrukne data levede ikke op til kvalitetskravene. Prøv evt. et tydeligere billede.",
+      "status": 422
+    },
+    {
+      "filename": "fakturaF37892.pdf",
+      "error": "De udtrukne data levede ikke op til kvalitetskravene. Prøv evt. et tydeligere billede.",
+      "status": 422
+    }
+  ],
+  "timestamp": "2025-06-12T00:50:58.157Z"
+}

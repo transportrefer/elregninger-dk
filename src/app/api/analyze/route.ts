@@ -4,7 +4,7 @@ import { billAnalysisSchema, validateTier1, validateTier2, validateTier3 } from 
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '');
 
-// Few-shot prompt for Danish electricity bills
+// Simple working prompt - will improve incrementally
 const ANALYSIS_PROMPT = `
 Du er en ekspert i analyse af danske elregninger. Analyser det uploadede billede/PDF og udtræk følgende data i JSON format.
 
@@ -12,6 +12,7 @@ VIGTIGT:
 - Returner ALLE tal med punktum som decimal-separator (f.eks. 1234.56, ikke 1234,56)
 - Returner ALLE datoer i YYYY-MM-DD format
 - Hvis du er usikker på en værdi, returner null i stedet for at gætte
+- Dit svar skal være RENT JSON uden forklaringer eller markdown
 
 Retning JSON format:
 {
@@ -88,8 +89,8 @@ export async function POST(request: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
     
-    // Prepare for Gemini API
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    // Prepare for Gemini API - Use 2.5 Flash Preview as requested
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-preview-05-20' });
     
     const imagePart = {
       inlineData: {
@@ -98,32 +99,42 @@ export async function POST(request: NextRequest) {
       }
     };
 
-    // Call Gemini API
-    const result = await model.generateContent([ANALYSIS_PROMPT, imagePart]);
+    // Call Gemini API with JSON mode to force valid JSON output
+    const result = await model.generateContent([ANALYSIS_PROMPT, imagePart], {
+      generationConfig: {
+        responseMimeType: "application/json"
+      }
+    });
     const response = await result.response;
     const text = response.text();
     
-    // Safely extract JSON
-    const jsonString = text.match(/\{[\s\S]*\}/)?.[0];
-    if (!jsonString) {
-      console.error("Gemini response did not contain a JSON object. Raw response:", text);
-      return NextResponse.json({ 
-        error: 'Kunne ikke analysere svaret fra AI-tjenesten. Regningen er muligvis ulæselig.',
-        tier: 'failed',
-        rawResponse: text
-      }, { status: 502 });
-    }
-    
+    // With JSON mode, response should be direct JSON. Add fallback parsing.
     let analysisData;
     try {
-      analysisData = JSON.parse(jsonString);
-    } catch {
-      console.error("Failed to parse JSON from Gemini response. String was:", jsonString);
-      return NextResponse.json({ 
-        error: 'Modtog et ugyldigt format fra AI-tjenesten.',
-        tier: 'failed',
-        rawResponse: text
-      }, { status: 502 });
+      // First, try parsing directly (JSON mode should give clean JSON)
+      analysisData = JSON.parse(text);
+    } catch (directParseError) {
+      // Fallback: extract JSON from wrapped text using regex
+      const jsonString = text.match(/\{[\s\S]*\}/)?.[0];
+      if (!jsonString) {
+        console.error("Gemini response did not contain a JSON object. Raw response:", text);
+        return NextResponse.json({ 
+          error: 'Kunne ikke analysere svaret fra AI-tjenesten. Regningen er muligvis ulæselig.',
+          tier: 'failed',
+          rawResponse: text
+        }, { status: 502 });
+      }
+      
+      try {
+        analysisData = JSON.parse(jsonString);
+      } catch (fallbackParseError) {
+        console.error("Failed to parse JSON from Gemini response. String was:", jsonString);
+        return NextResponse.json({ 
+          error: 'Modtog et ugyldigt format fra AI-tjenesten.',
+          tier: 'failed',
+          rawResponse: text
+        }, { status: 502 });
+      }
     }
 
     // Safely validate with Zod schema
