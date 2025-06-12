@@ -197,7 +197,7 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
     }
   };
   
-  const pollForResults = async (jobId: string, jobAccessToken: string): Promise<any> => {
+  const pollForResults = async (jobId: string, jobAccessToken: string): Promise<AnalysisResult> => {
     let interval = 2000; // Start with 2 seconds
     const maxInterval = 15000; // Cap at 15 seconds
     const maxPollingTime = 2 * 60 * 1000; // 2 minutes maximum

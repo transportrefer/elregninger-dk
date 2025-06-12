@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
 import { getJob, updateJobStatus } from '@/lib/job-manager';
-import { validateUploadFile } from '@/lib/blob-storage';
+// import { validateUploadFile } from '@/lib/blob-storage';
 
 // Fire-and-forget trigger for processing (Chain-of-Functions pattern)
 async function triggerProcessing(jobId: string) {
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (pathname: string, clientPayload?: string) => {
+      onBeforeGenerateToken: async (_pathname: string, _clientPayload?: string) => {
         // Validate the job exists and is in correct state
         const job = await getJob(jobId);
         

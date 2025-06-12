@@ -5,7 +5,7 @@ import { AnalysisResult } from '@/lib/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { CheckCircle, AlertCircle, XCircle, FileText, TrendingUp, Zap, Sparkles, Users, Shield, ArrowRight } from 'lucide-react';
+import { AlertCircle, XCircle, FileText, TrendingUp, Zap, Sparkles, Users, Shield, ArrowRight } from 'lucide-react';
 import BillUpload from '@/components/upload/BillUpload';
 
 function ComingSoonPage() {

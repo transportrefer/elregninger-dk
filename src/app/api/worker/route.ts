@@ -61,7 +61,7 @@ Almindelige linjer på danske elregninger: Elafgift, PSO-afgift, Nettarif, Trans
 Analyser kun billedet og returner gyldig JSON som vist i eksemplerne.
 `;
 
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   const startTime = Date.now();
   console.log('🔄 Worker started at:', new Date().toISOString());
   
@@ -115,7 +115,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-async function processJob(job: any) {
+async function processJob(job: { id: string; fileName: string; url: string; status: string }) {
   const jobStartTime = Date.now();
   console.log(`🚀 Processing job ${job.id}: ${job.fileName}`);
   

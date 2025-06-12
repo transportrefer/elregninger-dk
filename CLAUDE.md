@@ -122,6 +122,14 @@ VERCEL_KV_REST_API_TOKEN=
 - **Status:** **EXCEEDED 80% MVP TARGET** - Technical spike validation PASSED
 - **Timeline:** 55.6% baseline → temporary 0% failure → 94.4% success (chronological order)
 
+## 🌐 LIVE SITE UPDATE (December 6, 2025)
+- **Action:** Implemented domain-based routing for different user experiences
+- **Live Site (elregninger.dk):** Professional Danish "coming soon" landing page with modest messaging
+- **Development (localhost:3000):** Full AI testing interface with BillUpload component preserved
+- **Technical Implementation:** Client-side domain detection using `window.location.hostname`
+- **Rationale:** Prevent embarrassing exposure on live site while preserving all development functionality
+- **Status:** Both environments working correctly - development tools intact, public site professional
+
 ## ✅ Major Technical Achievements (Previous Session)
 - **Peak Performance:** 94.4% Tier 1+2 success rate (exceeded 80% MVP target)
 - **Gemini 2.5 Flash Preview:** Successfully integrated `gemini-2.5-flash-preview-05-20`
