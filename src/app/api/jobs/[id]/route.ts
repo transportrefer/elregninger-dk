@@ -1,15 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getJob } from '@/lib/job-manager';
 
-interface RouteParams {
-  params: {
-    id: string;
-  };
-}
-
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
-    const jobId = params.id;
+    const resolvedParams = await params;
+    const jobId = resolvedParams.id;
     
     // Get job access token from Authorization header
     const authHeader = request.headers.get('authorization');
@@ -25,7 +23,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     let job;
     try {
       job = await getJob(jobId, jobAccessToken);
-    } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (_error) {
       return NextResponse.json({
         error: 'Unauthorized or invalid token'
       }, { status: 401 });

@@ -43,7 +43,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (_pathname: string, _clientPayload?: string) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      onBeforeGenerateToken: async (_pathname: string, _clientPayload: string | null, _multipart: boolean) => {
         // Validate the job exists and is in correct state
         const job = await getJob(jobId);
         

@@ -117,9 +117,10 @@ export async function POST(request: NextRequest) {
       // Attempt to process the job within time budget (8 seconds max)
       const processingResult = await processJobWithTimeLimit(job, 8000);
       
-      if (processingResult.completed) {
+      if (processingResult.completed && processingResult.result) {
         // Job completed successfully
-        await markJobCompleted(jobId, processingResult.result);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        await markJobCompleted(jobId, processingResult.result as any);
         console.log(`✅ Job ${jobId} completed successfully`);
         
         // Clean up blob storage
@@ -183,13 +184,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function processJobWithTimeLimit(job: any, timeLimitMs: number) {
+async function processJobWithTimeLimit(job: { id: string; fileName?: string; url?: string; status: string; blobPath?: string }, timeLimitMs: number) {
   const startTime = Date.now();
   
   try {
     console.log(`🤖 Starting Gemini analysis for job ${job.id}`);
     
     // Download file from blob storage
+    if (!job.blobPath || !job.fileName) {
+      throw new Error('Missing blobPath or fileName');
+    }
     const fileBuffer = await downloadFromBlob(job.blobPath);
     
     // Determine content type

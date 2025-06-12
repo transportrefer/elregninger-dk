@@ -61,6 +61,7 @@ Almindelige linjer på danske elregninger: Elafgift, PSO-afgift, Nettarif, Trans
 Analyser kun billedet og returner gyldig JSON som vist i eksemplerne.
 `;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function GET(_request: NextRequest) {
   const startTime = Date.now();
   console.log('🔄 Worker started at:', new Date().toISOString());
@@ -115,7 +116,7 @@ export async function GET(_request: NextRequest) {
   }
 }
 
-async function processJob(job: { id: string; fileName: string; url: string; status: string }) {
+async function processJob(job: { id: string; fileName?: string; url?: string; status: string; blobPath?: string }) {
   const jobStartTime = Date.now();
   console.log(`🚀 Processing job ${job.id}: ${job.fileName}`);
   
@@ -126,6 +127,9 @@ async function processJob(job: { id: string; fileName: string; url: string; stat
     });
     
     // Download file from blob storage
+    if (!job.blobPath || !job.fileName) {
+      throw new Error('Missing blobPath or fileName');
+    }
     console.log(`📥 Downloading file from: ${job.blobPath}`);
     const fileBuffer = await downloadFromBlob(job.blobPath);
     
@@ -139,7 +143,8 @@ async function processJob(job: { id: string; fileName: string; url: string; stat
     const result = await runGeminiAnalysis(fileBuffer, contentType);
     
     // Store result and mark as completed
-    await markJobCompleted(job.id, result);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await markJobCompleted(job.id, result as any);
     
     // Clean up blob storage
     await deleteFromBlob(job.blobPath);

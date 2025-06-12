@@ -55,7 +55,7 @@ export async function createJob(
   pipeline.sadd(statusIndexKey('AWAITING_UPLOAD'), jobId);
   
   // Set job expiry in a separate tracking set
-  pipeline.zadd('jobs:expiry', Date.now() + 86400000, jobId); // 24-hour expiry
+  pipeline.zadd('jobs:expiry', { score: Date.now() + 86400000, member: jobId }); // 24-hour expiry
   
   await pipeline.exec();
   
@@ -196,7 +196,7 @@ export async function cleanupExpiredJobs(): Promise<number> {
   const now = Date.now();
   
   // Get expired job IDs from sorted set
-  const expiredJobIds = await kv.zrangebyscore('jobs:expiry', 0, now);
+  const expiredJobIds = await kv.zrange('jobs:expiry', 0, now, { byScore: true });
   
   if (expiredJobIds.length === 0) {
     return 0;
@@ -206,15 +206,15 @@ export async function cleanupExpiredJobs(): Promise<number> {
   
   for (const jobId of expiredJobIds) {
     try {
-      const job = await kv.get<Job>(jobKey(jobId));
+      const job = await kv.get<Job>(jobKey(jobId as string));
       
       if (job) {
         const pipeline = kv.pipeline();
         
         // Remove from all indexes
-        pipeline.del(jobKey(jobId));
-        pipeline.srem(statusIndexKey(job.status), jobId);
-        pipeline.zrem('jobs:expiry', jobId);
+        pipeline.del(jobKey(jobId as string));
+        pipeline.srem(statusIndexKey(job.status), jobId as string);
+        pipeline.zrem('jobs:expiry', jobId as string);
         
         await pipeline.exec();
         deletedCount++;

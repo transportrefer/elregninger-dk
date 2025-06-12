@@ -25,7 +25,7 @@ export async function uploadToBlob(
   contentType: string
 ): Promise<PutBlobResult> {
   return await put(blobPath, file, {
-    access: 'private',
+    access: 'public',
     contentType
   });
 }

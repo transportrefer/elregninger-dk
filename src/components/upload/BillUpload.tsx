@@ -167,7 +167,7 @@ export default function BillUpload({ onFileAnalyzed, onError }: BillUploadProps)
       console.log('📤 Uploading file to blob storage...');
       
       const blob = await upload(file.name, file, {
-        access: 'private',
+        access: 'public',
         handleUploadUrl: uploadUrl
       });
       
