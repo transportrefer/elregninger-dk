@@ -53,10 +53,80 @@ Fokuser især på at finde:
 2. VIGTIGT: providerName, costBreakdown_DKK, consumptionPeriod
 3. NICE-TO-HAVE: priceType, isGreenEnergy, pricePeriods
 
-Almindelige danske eludbydere: Andel Energi, Norlys, Ørsted, Ewii, E.ON, etc.
+### EKSEMPLER
+
+**Eksempel 1: Vindstød regning**
+{
+  "providerName": "Vindstød",
+  "productName": "Grøn strøm variabel",
+  "priceType": "variable",
+  "isFinalSettlement": true,
+  "isGreenEnergy": true,
+  "consumptionPeriod": {
+    "startDate": "2024-01-01",
+    "endDate": "2024-03-31"
+  },
+  "totalConsumption_kWh": 1205,
+  "costBreakdown_DKK": {
+    "pureElectricity": 542.75,
+    "transportAndGrid": 891.23,
+    "stateTaxes": null,
+    "elafgift": 107.45,
+    "psoAfgift": 45.67,
+    "providerSubscriptions": null,
+    "oneOffFees": null,
+    "vat": 245.45
+  },
+  "totalAmountForConsumption_DKK": 1832.55,
+  "averagePrice_kr_per_kWh": 1.52,
+  "pricePeriods": [
+    {
+      "startDate": "2024-01-01",
+      "endDate": "2024-03-31",
+      "pricePerKwh": 1.52
+    }
+  ],
+  "notes": null
+}
+
+**Eksempel 2: EWII regning**  
+{
+  "providerName": "EWII",
+  "productName": "El Fix 12",
+  "priceType": "fixed",
+  "isFinalSettlement": false,
+  "isGreenEnergy": null,
+  "consumptionPeriod": {
+    "startDate": "2024-02-01",
+    "endDate": "2024-02-29"
+  },
+  "totalConsumption_kWh": 350,
+  "costBreakdown_DKK": {
+    "pureElectricity": 280.00,
+    "transportAndGrid": 456.30,
+    "stateTaxes": null,
+    "elafgift": 31.15,
+    "psoAfgift": 12.50,
+    "providerSubscriptions": 29.00,
+    "oneOffFees": null,
+    "vat": 202.24
+  },
+  "totalAmountForConsumption_DKK": 1011.19,
+  "averagePrice_kr_per_kWh": 2.89,
+  "pricePeriods": [
+    {
+      "startDate": "2024-02-01",
+      "endDate": "2024-02-29",
+      "pricePerKwh": 0.80
+    }
+  ],
+  "notes": null
+}
+
+Almindelige danske eludbydere: Vindstød, Andel Energi, Norlys, Ørsted, Ewii, E.ON, Energi+, Strømlinet, etc.
 Almindelige linjer på danske elregninger: Elafgift, PSO-afgift, Nettarif, Transport, Moms (25%)
 
-Analyser kun billedet og returner gyldig JSON.
+Analyser kun billedet og returner gyldig JSON som vist i eksemplerne.
 `;
 
 export async function POST(request: NextRequest) {
