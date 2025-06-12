@@ -130,9 +130,14 @@ export default function ElregningerAnalysis() {
 
   useEffect(() => {
     setMounted(true);
-    // Check if we're on the production domain
+    // Check if we're on the production domain (including www subdomain)
     if (typeof window !== 'undefined') {
-      setIsProduction(window.location.hostname === 'elregninger.dk');
+      const hostname = window.location.hostname;
+      const isProductionDomain = hostname.includes('elregninger.dk');
+      setIsProduction(isProductionDomain);
+      
+      // Debug logging (remove after testing)
+      console.log('Hostname:', hostname, 'Is Production:', isProductionDomain);
     }
   }, []);
 
