@@ -8,7 +8,10 @@ const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GEMINI_API_KEY || '');
 const ANALYSIS_PROMPT = `
 Du er en ekspert i analyse af danske elregninger. Analyser det uploadede billede/PDF og udtræk følgende data i JSON format.
 
-Hvis du er usikker på en værdi, returner null i stedet for at gætte.
+VIGTIGT: 
+- Returner ALLE tal med punktum som decimal-separator (f.eks. 1234.56, ikke 1234,56)
+- Returner ALLE datoer i YYYY-MM-DD format
+- Hvis du er usikker på en værdi, returner null i stedet for at gætte
 
 Retning JSON format:
 {
@@ -58,10 +61,11 @@ Analyser kun billedet og returner gyldig JSON.
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file') as File;
+    const file = formData.get('file');
     
-    if (!file) {
-      return NextResponse.json({ error: 'Ingen fil uploadet' }, { status: 400 });
+    // More robust file validation
+    if (!file || !(file instanceof File)) {
+      return NextResponse.json({ error: 'Ingen fil blev uploadet.' }, { status: 400 });
     }
 
     // Validate file type and size
@@ -99,76 +103,80 @@ export async function POST(request: NextRequest) {
     const response = await result.response;
     const text = response.text();
     
-    // Extract JSON from response
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      return NextResponse.json({
-        error: 'Kunne ikke læse regningen. Prøv med et tydeligere billede eller PDF-fil.',
-        tier: 'failed'
-      }, { status: 422 });
+    // Safely extract JSON
+    const jsonString = text.match(/\{[\s\S]*\}/)?.[0];
+    if (!jsonString) {
+      console.error("Gemini response did not contain a JSON object. Raw response:", text);
+      return NextResponse.json({ 
+        error: 'Kunne ikke analysere svaret fra AI-tjenesten. Regningen er muligvis ulæselig.',
+        tier: 'failed',
+        rawResponse: text
+      }, { status: 502 });
     }
-
+    
     let analysisData;
     try {
-      analysisData = JSON.parse(jsonMatch[0]);
+      analysisData = JSON.parse(jsonString);
     } catch {
-      return NextResponse.json({
-        error: 'Fejl i databehandling. Prøv venligst igen.',
-        tier: 'failed'
-      }, { status: 422 });
-    }
-
-    // Validate with Zod schema
-    try {
-      const validatedData = billAnalysisSchema.parse(analysisData);
-      
-      // Determine success tier
-      const tier1Success = validateTier1(validatedData);
-      const tier2Success = validateTier2(validatedData);
-      const tier3Success = validateTier3(validatedData);
-      
-      let tier = 'failed';
-      if (tier1Success && tier2Success && tier3Success) {
-        tier = 'full';
-      } else if (tier1Success && tier2Success) {
-        tier = 'partial';
-      } else if (tier1Success) {
-        tier = 'basic';
-      }
-
-      return NextResponse.json({
-        success: true,
-        data: validatedData,
-        tier,
-        rawResponse: text // For debugging during spike
-      });
-      
-    } catch {
-      // If validation fails but we have some data, determine what we can salvage
-      const tier1Success = validateTier1(analysisData);
-      
-      if (tier1Success) {
-        return NextResponse.json({
-          success: true,
-          data: analysisData,
-          tier: 'basic',
-          warning: 'Kun grundlæggende data kunne udtrækkes.',
-          rawResponse: text
-        });
-      }
-      
-      return NextResponse.json({
-        error: 'Vi kunne ikke læse de vigtigste tal fra regningen. Prøv venligst med et tydeligere billede eller PDF-fil.',
+      console.error("Failed to parse JSON from Gemini response. String was:", jsonString);
+      return NextResponse.json({ 
+        error: 'Modtog et ugyldigt format fra AI-tjenesten.',
         tier: 'failed',
-        rawResponse: text // For debugging
+        rawResponse: text
+      }, { status: 502 });
+    }
+
+    // Safely validate with Zod schema
+    const validationResult = billAnalysisSchema.safeParse(analysisData);
+    if (!validationResult.success) {
+      console.error("Zod validation failed:", validationResult.error.flatten());
+      return NextResponse.json({
+        error: 'De udtrukne data levede ikke op til kvalitetskravene. Prøv evt. et tydeligere billede.',
+        tier: 'failed',
+        zodErrors: validationResult.error.flatten(),
+        rawResponse: text
       }, { status: 422 });
     }
+
+    const validatedData = validationResult.data;
+    
+    // Determine success tier
+    const tier1Success = validateTier1(validatedData);
+    const tier2Success = validateTier2(validatedData);
+    const tier3Success = validateTier3(validatedData);
+    
+    let tier = 'failed';
+    if (tier1Success && tier2Success && tier3Success) {
+      tier = 'full';
+    } else if (tier1Success && tier2Success) {
+      tier = 'partial';
+    } else if (tier1Success) {
+      tier = 'basic';
+    }
+
+    // Cross-field validation - sanity check totals
+    if (validatedData.costBreakdown_DKK && validatedData.totalAmountForConsumption_DKK) {
+      const breakdownSum = Object.values(validatedData.costBreakdown_DKK).reduce((acc, val) => (acc ?? 0) + (val ?? 0), 0) ?? 0;
+      const total = validatedData.totalAmountForConsumption_DKK ?? 0;
+      
+      if (Math.abs(breakdownSum - total) > 1) {
+        console.warn(`Warning: Cost breakdown sum (${breakdownSum}) does not match total amount (${total})`);
+      }
+    }
+
+    return NextResponse.json({
+      success: true,
+      data: validatedData,
+      tier,
+      rawResponse: text // For debugging during spike
+    });
 
   } catch (error) {
     console.error('Analysis error:', error);
     return NextResponse.json({
-      error: 'Teknisk fejl. Prøv venligst igen senere.',
+      error: 'En uventet teknisk fejl opstod. Prøv venligst igen.',
       tier: 'failed'
     }, { status: 500 });
   }
 }
+

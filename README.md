@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Elregninger.dk - Danish Electricity Bill Analysis MVP
 
-## Getting Started
+> Danish electricity bill analysis web application using AI to provide transparent insights with household comparisons.
 
-First, run the development server:
+## 🚀 Quick Start
+
+1. **Clone and install**
+   ```bash
+   git clone https://github.com/transportrefer/elregninger-dk.git
+   cd elregninger-dk
+   npm install
+   ```
+
+2. **Environment setup**
+   ```bash
+   cp .env.local.example .env.local
+   # Add your API keys to .env.local
+   ```
+
+3. **Start development**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser**
+   - Visit http://localhost:3000
+
+## 🔧 Tech Stack
+
+- **Frontend:** Next.js 14+ with App Router, TypeScript
+- **Styling:** Tailwind CSS + shadcn/ui components  
+- **AI:** Google Gemini Flash API (multimodal)
+- **Validation:** Zod schemas
+- **Hosting:** Vercel (via GitHub deployment)
+
+## 📋 Environment Variables
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+GOOGLE_GEMINI_API_KEY=your_gemini_api_key_here
+GOOGLE_MAPS_API_KEY=your_maps_api_key_here
+BBR_API_KEY=your_bbr_api_key_here
+MAILERLITE_API_KEY=your_mailerlite_api_key_here
+GA4_MEASUREMENT_ID=your_ga4_id_here
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🧪 Current Status: Technical Spike
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+This is currently a **technical spike** to validate the core AI extraction pipeline:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- ✅ Google Gemini API integration
+- ✅ Zod schema validation for Danish bills
+- ✅ Tiered extraction (Critical/Important/Nice-to-have)
+- ✅ Mobile-first test interface
+- ✅ Danish language UI and error messages
+- ✅ Privacy-conscious file handling
 
-## Learn More
+**Next:** Validate 80%+ success rate on Tier 1+2 extraction with real Danish bills.
 
-To learn more about Next.js, take a look at the following resources:
+## 🔒 Privacy by Design
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Files processed in-memory only
+- Immediate deletion after analysis
+- No persistent storage of bill content
+- GDPR-compliant data handling
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📚 Documentation
 
-## Deploy on Vercel
+- [`PRD.md`](./PRD.md) - Product Requirements Document
+- [`MVP_TASKS.md`](./MVP_TASKS.md) - Comprehensive task breakdown
+- [`CLAUDE.md`](./CLAUDE.md) - Development guidelines and config
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧪 Testing
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build      # Production build test
+npm run lint       # ESLint check
+npm run typecheck  # TypeScript validation
+```
+
+## 🚀 Deployment
+
+Connected to Vercel via GitHub for automatic deployments:
+- **Production:** [elregninger.dk](https://elregninger.dk)
+- **Staging:** Auto-deployed from feature branches
+
+---
+
+**Target:** Become Denmark's most trusted utility bill analysis tool for financially literate, privacy-conscious users.

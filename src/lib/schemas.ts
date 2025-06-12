@@ -11,23 +11,23 @@ export const billAnalysisSchema = z.object({
     startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/)
   }).nullable(),
-  totalConsumption_kWh: z.number().positive().nullable(),
+  totalConsumption_kWh: z.coerce.number().positive().nullable(),
   costBreakdown_DKK: z.object({
-    pureElectricity: z.number().nullable(),
-    transportAndGrid: z.number().nullable(),
-    stateTaxes: z.number().nullable(),
-    elafgift: z.number().nullable(),
-    psoAfgift: z.number().nullable(),
-    providerSubscriptions: z.number().nullable(),
-    oneOffFees: z.number().nullable(),
-    vat: z.number().nullable()
+    pureElectricity: z.coerce.number().nonnegative().nullable(),
+    transportAndGrid: z.coerce.number().nonnegative().nullable(),
+    stateTaxes: z.coerce.number().nonnegative().nullable(),
+    elafgift: z.coerce.number().nonnegative().nullable(),
+    psoAfgift: z.coerce.number().nonnegative().nullable(),
+    providerSubscriptions: z.coerce.number().nonnegative().nullable(),
+    oneOffFees: z.coerce.number().nonnegative().nullable(),
+    vat: z.coerce.number().nonnegative().nullable()
   }).nullable(),
-  totalAmountForConsumption_DKK: z.number().nullable(),
-  averagePrice_kr_per_kWh: z.number().positive().nullable(),
+  totalAmountForConsumption_DKK: z.coerce.number().nullable(),
+  averagePrice_kr_per_kWh: z.coerce.number().positive().nullable(),
   pricePeriods: z.array(z.object({
     startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
     endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-    pricePerKwh: z.number().positive()
+    pricePerKwh: z.coerce.number().positive()
   })).nullable(),
   notes: z.string().nullable()
 });
